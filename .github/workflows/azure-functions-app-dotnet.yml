@@ -5,9 +5,10 @@ on:
     branches: ["main"]
 
 env:
-  AZURE_WEBAPP_NAME: 'MyMvcApp' # Azure Web App name
+  AZURE_WEBAPP_NAME: 'MyMvcApp-123e4567-e89b-12d3-a456-426614174000' # Azure Web App name
   AZURE_WEBAPP_PACKAGE_PATH: '.' # Path to your web app project
   DOTNET_VERSION: '6.0.x' # .NET version to use
+  RESOURCE_GROUP: 'GitHub-Copilot-Challenges' # Azure Resource Group
 
 jobs:
   build-and-deploy:
@@ -29,6 +30,13 @@ jobs:
     - name: 'Build and Publish'
       run: |
         dotnet publish -c Release -o output
+
+    - name: 'Deploy ARM Template'
+      run: |
+        az deployment group create \
+          --resource-group ${{ env.RESOURCE_GROUP }} \
+          --template-file deploy.json \
+          --parameters @deploy.parameters.json
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
