@@ -33,9 +33,9 @@ jobs:
 
     - name: 'Deploy ARM Template'
       run: |
-        az deployment group create \
-          --resource-group ${{ env.RESOURCE_GROUP }} \
-          --template-file deploy.json \
+        az deployment group create `
+          --resource-group "${{ env.RESOURCE_GROUP }}" `
+          --template-file deploy.json `
           --parameters @deploy.parameters.json
 
     - name: 'Deploy to Azure Web App'
