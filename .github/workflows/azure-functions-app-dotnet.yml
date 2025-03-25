@@ -5,40 +5,29 @@ on:
     branches: ["main"]
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'Github-Copilot-Challenges-FunctionApp' # Set this to your Azure Function App name
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'                             # Path to your function app project, defaults to the repository root
-  DOTNET_VERSION: '6.0.x'                                         # Set this to the .NET version to use (e.g., '6.0.x', '7.0.x')
+  AZURE_FUNCTIONAPP_NAME: 'Github-Copilot-Challenges-FunctionApp' # Azure Function App name
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'                             # Path to your function app project
+  DOTNET_VERSION: '6.0.x'                                         # .NET version to use
 
 jobs:
   build-and-deploy:
-    runs-on: windows-latest # For Linux, use ubuntu-latest
-    environment: dev
+    runs-on: windows-latest
     steps:
-    - name: 'Checkout GitHub Action'
+    - name: 'Checkout code'
       uses: actions/checkout@v4
 
-    # If you want to use Azure RBAC instead of Publish Profile, then uncomment the task below
-    # - name: 'Login via Azure CLI'
-    #   uses: azure/login@v1
-    #   with:
-    #     creds: ${{ secrets.AZURE_RBAC_CREDENTIALS }} # Set up AZURE_RBAC_CREDENTIALS secrets in your repository
-
-    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+    - name: 'Setup .NET ${{ env.DOTNET_VERSION }}'
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: 'Resolve Project Dependencies Using Dotnet'
-      shell: pwsh # For Linux, use bash
+    - name: 'Build and Publish'
       run: |
-        pushd './D:\a\MyMvcApp-Contact-Databse-Application\MyMvcApp-Contact-Databse-Application\bin\Release\net8.0\MyMvcApp'
-        dotnet build --configuration Release --output ./output
-        popd
+        dotnet publish -c Release -o output
 
-    - name: 'Run Azure Functions Action'
+    - name: 'Deploy to Azure Function App'
       uses: Azure/functions-action@v1
-      id: fa
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }} # Ensure this secret is set in your repository
+        package: './output'
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
