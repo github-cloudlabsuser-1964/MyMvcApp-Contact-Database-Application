@@ -49,7 +49,7 @@ jobs:
     - name: 'Resolve Project Dependencies Using Dotnet'
       shell: pwsh # For Linux, use bash
       run: |
-        pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+        pushd './D:\a\MyMvcApp-Contact-Databse-Application\MyMvcApp-Contact-Databse-Application\bin\Release\net8.0\MyMvcApp'
         dotnet build --configuration Release --output ./output
         popd
 
